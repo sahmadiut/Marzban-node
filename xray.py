@@ -27,8 +27,8 @@ class XRayConfig(dict):
         self.peer_ip = peer_ip
 
         super().__init__(config)
-        self._apply_api()
         self._load_custom_config()
+        self._apply_api()
 
     def to_json(self, **json_kwargs):
         return json.dumps(self, **json_kwargs)
