@@ -1,12 +1,13 @@
 import atexit
 import json
+import os
 import re
 import subprocess
 import threading
 from collections import deque
 from contextlib import contextmanager
 
-from config import DEBUG, SSL_CERT_FILE, SSL_KEY_FILE, XRAY_API_HOST, XRAY_API_PORT, INBOUNDS
+from config import DEBUG, SSL_CERT_FILE, SSL_KEY_FILE, XRAY_API_HOST, XRAY_API_PORT, INBOUNDS, XRAY_CONFIG_FILE
 from logger import logger
 
 
@@ -26,10 +27,39 @@ class XRayConfig(dict):
         self.peer_ip = peer_ip
 
         super().__init__(config)
+        self._load_custom_config()
         self._apply_api()
 
     def to_json(self, **json_kwargs):
         return json.dumps(self, **json_kwargs)
+
+    def _load_custom_config(self):
+        """
+        Load custom routing and outbounds from XRAY_CONFIG_FILE if it exists.
+        This allows per-node customization while maintaining backward compatibility.
+        """
+        if not XRAY_CONFIG_FILE or not os.path.exists(XRAY_CONFIG_FILE):
+            return
+
+        try:
+            with open(XRAY_CONFIG_FILE, 'r', encoding='utf-8') as f:
+                custom_config = json.load(f)
+            
+            # Override routing if present in custom config
+            if 'routing' in custom_config:
+                logger.info(f"Loading custom routing from {XRAY_CONFIG_FILE}")
+                self['routing'] = custom_config['routing']
+            
+            # Override outbounds if present in custom config
+            if 'outbounds' in custom_config:
+                logger.info(f"Loading custom outbounds from {XRAY_CONFIG_FILE}")
+                self['outbounds'] = custom_config['outbounds']
+            
+            logger.info("Custom config loaded successfully")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse custom config file {XRAY_CONFIG_FILE}: {e}")
+        except Exception as e:
+            logger.error(f"Failed to load custom config file {XRAY_CONFIG_FILE}: {e}")
 
     def _apply_api(self):
         for inbound in self.get('inbounds', []).copy():

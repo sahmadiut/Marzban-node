@@ -1,0 +1,33 @@
+{
+  "routing": {
+    "domainStrategy": "IPIfNonMatch",
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "BLOCK"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-ads-all"
+        ],
+        "outboundTag": "BLOCK"
+      }
+    ]
+  },
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "DIRECT",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "BLOCK",
+      "settings": {}
+    }
+  ]
+}

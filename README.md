@@ -17,6 +17,8 @@ sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/
 Use `help` to view all commands:
 ```marzban-node help```
 
+## Custom Configuration
+You can now customize routing and outbounds for each node using a custom JSON configuration file. See [CUSTOM_CONFIG.md](CUSTOM_CONFIG.md) for detailed instructions.
 
 ## Manual install
 Read the setup guide here: https://gozargah.github.io/marzban/docs/marzban-node

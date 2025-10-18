@@ -10,6 +10,7 @@ XRAY_API_HOST = config("XRAY_API_HOST", default="0.0.0.0")
 XRAY_API_PORT = config('XRAY_API_PORT', cast=int, default=62051)
 XRAY_EXECUTABLE_PATH = config("XRAY_EXECUTABLE_PATH", default="/usr/local/bin/xray")
 XRAY_ASSETS_PATH = config("XRAY_ASSETS_PATH", default="/usr/local/share/xray")
+XRAY_CONFIG_FILE = config("XRAY_CONFIG_FILE", default="")
 
 SSL_CERT_FILE = config("SSL_CERT_FILE", default="/var/lib/marzban-node/ssl_cert.pem")
 SSL_KEY_FILE = config("SSL_KEY_FILE", default="/var/lib/marzban-node/ssl_key.pem")
