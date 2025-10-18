@@ -27,8 +27,8 @@ class XRayConfig(dict):
         self.peer_ip = peer_ip
 
         super().__init__(config)
-        self._load_custom_config()
         self._apply_api()
+        self._load_custom_config()
 
     def to_json(self, **json_kwargs):
         return json.dumps(self, **json_kwargs)
@@ -46,9 +46,21 @@ class XRayConfig(dict):
                 custom_config = json.load(f)
             
             # Override routing if present in custom config
+            # But preserve the API routing rule that was added by _apply_api
             if 'routing' in custom_config:
                 logger.info(f"Loading custom routing from {XRAY_CONFIG_FILE}")
+                
+                # Get the API rule that was inserted at index 0 by _apply_api
+                api_rule = self.get('routing', {}).get('rules', [{}])[0] if self.get('routing', {}).get('rules') else None
+                
+                # Override the routing with custom config
                 self['routing'] = custom_config['routing']
+                
+                # Re-insert the API rule at the beginning to ensure it takes priority
+                if api_rule and api_rule.get('outboundTag') == 'API':
+                    if 'rules' not in self['routing']:
+                        self['routing']['rules'] = []
+                    self['routing']['rules'].insert(0, api_rule)
             
             # Override outbounds if present in custom config
             if 'outbounds' in custom_config:
