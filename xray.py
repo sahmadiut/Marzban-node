@@ -71,7 +71,8 @@ class XRayConfig(dict):
                 self['outbounds'] = custom_config['outbounds']
             
             logger.info("[CUSTOM CONFIG] Custom config applied successfully")
-            logger.info(f"[CUSTOM CONFIG] Final config: {json.dumps(self, indent=2, ensure_ascii=False)}")
+            logger.info(f"[CUSTOM CONFIG] Final routing: {json.dumps(self.get('routing', {}), indent=2, ensure_ascii=False)}")
+            logger.info(f"[CUSTOM CONFIG] Final outbounds: {json.dumps(self.get('outbounds', []), indent=2, ensure_ascii=False)}")
         except json.JSONDecodeError as e:
             logger.error(f"[CUSTOM CONFIG] Failed to parse custom config file {XRAY_CONFIG_FILE}: {e}")
         except Exception as e:
