@@ -1,7 +1,7 @@
 services:
   marzban-node:
     # build: .
-    image: gozargah/marzban-node:latest
+    image: sahmadiut/marzban-node:latest
     restart: always
     network_mode: host
 
@@ -11,6 +11,8 @@ services:
       SSL_KEY_FILE: "/var/lib/marzban-node/ssl_key.pem"
       # SSL_CLIENT_CERT_FILE: "/var/lib/marzban-node/ssl_client_cert.pem"
       # SERVICE_PROTOCOL: "rest"
+      XRAY_CONFIG_FILE: "/var/lib/marzban-node/xray_config.json"
+
 
     volumes:
       - /var/lib/marzban-node:/var/lib/marzban-node

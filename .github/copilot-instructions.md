@@ -29,7 +29,7 @@ Developer workflows
 - Run locally (REST, default): ensure `xray` binary and assets exist at configured paths or override via env. Provide TLS certs in `SSL_CERT_FILE`/`SSL_KEY_FILE` (or let app autogenerate on first run) and a client CA in `SSL_CLIENT_CERT_FILE`.
   - Start: `python main.py` (FastAPI + Uvicorn). REST requires client cert; without it, app exits.
 - Run with rpyc: set `SERVICE_PROTOCOL=rpyc`; client cert optional. Start `python main.py` and connect with an rpyc client using TLS.
-- Docker: `docker-compose.yml` uses image `gozargah/marzban-node:latest` with `network_mode: host` and mounts `/var/lib/marzban-node` for cert persistence. Override envs as needed.
+- Docker: `docker-compose.yml` uses image `sahmadiut/marzban-node:latest` with `network_mode: host` and mounts `/var/lib/marzban-node` for cert persistence. Override envs as needed.
 - Building image: `Dockerfile` builds deps and installs Xray via `install_latest_xray.sh`, then runs `python main.py`.
 
 API usage examples (REST)
