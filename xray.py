@@ -27,8 +27,8 @@ class XRayConfig(dict):
         self.peer_ip = peer_ip
 
         super().__init__(config)
-        self._load_custom_config()
         self._apply_api()
+        self._load_custom_config()
 
     def to_json(self, **json_kwargs):
         return json.dumps(self, **json_kwargs)
@@ -48,7 +48,7 @@ class XRayConfig(dict):
             # Override routing if present in custom config
             # But preserve the API routing rule that was added by _apply_api
             if 'routing' in custom_config:
-                logger.info(f"Loading custom routing from {XRAY_CONFIG_FILE}")
+                logger.info(f"[CUSTOM CONFIG] Overriding routing with custom config from {XRAY_CONFIG_FILE}")
                 
                 # Get the API rule that was inserted at index 0 by _apply_api
                 api_rule = self.get('routing', {}).get('rules', [{}])[0] if self.get('routing', {}).get('rules') else None
@@ -61,17 +61,21 @@ class XRayConfig(dict):
                     if 'rules' not in self['routing']:
                         self['routing']['rules'] = []
                     self['routing']['rules'].insert(0, api_rule)
+                    logger.info(f"[CUSTOM CONFIG] API routing rule preserved and inserted at index 0")
+                else:
+                    logger.warning(f"[CUSTOM CONFIG] Could not find API routing rule to preserve!")
             
             # Override outbounds if present in custom config
             if 'outbounds' in custom_config:
-                logger.info(f"Loading custom outbounds from {XRAY_CONFIG_FILE}")
+                logger.info(f"[CUSTOM CONFIG] Overriding {len(custom_config['outbounds'])} outbound(s) with custom config from {XRAY_CONFIG_FILE}")
                 self['outbounds'] = custom_config['outbounds']
             
-            logger.info("Custom config loaded successfully")
+            logger.info("[CUSTOM CONFIG] Custom config applied successfully")
+            logger.info(f"[CUSTOM CONFIG] Final config: {json.dumps(self, indent=2, ensure_ascii=False)}")
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse custom config file {XRAY_CONFIG_FILE}: {e}")
+            logger.error(f"[CUSTOM CONFIG] Failed to parse custom config file {XRAY_CONFIG_FILE}: {e}")
         except Exception as e:
-            logger.error(f"Failed to load custom config file {XRAY_CONFIG_FILE}: {e}")
+            logger.error(f"[CUSTOM CONFIG] Failed to load custom config file {XRAY_CONFIG_FILE}: {e}")
 
     def _apply_api(self):
         for inbound in self.get('inbounds', []).copy():
